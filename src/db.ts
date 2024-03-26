@@ -41,7 +41,7 @@ export function executeQuery(query:string) {
 
 export const addEntry = async (id:string, uploaded:boolean, callback:any) => {
   const uploadedValue = uploaded ? 1 : 0;
-  const insertQuery = `INSERT INTO your_table_name (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
+  const insertQuery = `INSERT INTO vercel (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
 
   try {
     const result = await executeQuery(insertQuery);
@@ -50,6 +50,15 @@ export const addEntry = async (id:string, uploaded:boolean, callback:any) => {
     callback(err, null);
   }
 };
+
+/* const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS vercel (
+    id VARCHAR(255) NOT NULL,
+    uploaded BOOLEAN,
+    deployed BOOLEAN,
+    PRIMARY KEY (id)
+  )
+`; */
 
 
 /* const pool = mysql.createPool({

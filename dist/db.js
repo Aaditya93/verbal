@@ -45,7 +45,7 @@ exports.executeQuery = executeQuery;
  */
 const addEntry = (id, uploaded, callback) => __awaiter(void 0, void 0, void 0, function* () {
     const uploadedValue = uploaded ? 1 : 0;
-    const insertQuery = `INSERT INTO your_table_name (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
+    const insertQuery = `INSERT INTO vercel (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
     try {
         const result = yield executeQuery(insertQuery);
         callback(null, result);
@@ -55,6 +55,14 @@ const addEntry = (id, uploaded, callback) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.addEntry = addEntry;
+/* const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS vercel (
+    id VARCHAR(255) NOT NULL,
+    uploaded BOOLEAN,
+    deployed BOOLEAN,
+    PRIMARY KEY (id)
+  )
+`; */
 /* const pool = mysql.createPool({
   connectionLimit: 10,
   host: process.env.DB_HOST,
