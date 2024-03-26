@@ -19,6 +19,7 @@ const utils_1 = require("./utils");
 const path_1 = __importDefault(require("path"));
 const files_1 = require("./files");
 const aws_1 = require("./aws");
+const db_1 = require("./db");
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
@@ -31,7 +32,15 @@ app.post("/deploy", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     files.forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, aws_1.uploadFile)(file.slice(__dirname.length + 1), file);
     }));
-    (0, aws_1.addQueue)(id);
+    yield (0, aws_1.addQueue)(id);
+    yield (0, db_1.addEntry)(id, true, (err, result) => {
+        if (err) {
+            console.error('Error adding entry:', err);
+        }
+        else {
+            console.log('Entry added successfully.');
+        }
+    });
     res.json({
         id: id
     });

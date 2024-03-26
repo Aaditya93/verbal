@@ -2,8 +2,57 @@
 const mysql = require('mysql');
 require('dotenv').config(); 
 
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  port:"3306",
+  user: process.env.DATABASE_USER ,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DB_DATABASE,
 
-const pool = mysql.createPool({
+}); 
+
+db.connect((err: any) => {
+  if (err) {
+    console.error('Error connecting to database:', err);
+    return;
+  }
+  console.log('Connected to the database.');
+
+})
+
+
+export function executeQuery(query:string) {
+  db.query(query, (err:any, result:any) => {
+    if (err) {
+      console.error('Error executing query:', err);
+      
+    } else {
+      console.log('Query executed successfully:', result);
+
+    }
+  });
+}
+ 
+/* export const addEntry = (id:string, uploaded:boolean) => {
+  const insertQuery = `INSERT INTO your_table_name (id, uploaded) VALUES ('${id}', ${uploaded ? 1 : 0})`;
+  executeQuery(insertQuery);
+};
+ */
+
+export const addEntry = async (id:string, uploaded:boolean, callback:any) => {
+  const uploadedValue = uploaded ? 1 : 0;
+  const insertQuery = `INSERT INTO your_table_name (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
+
+  try {
+    const result = await executeQuery(insertQuery);
+    callback(null, result);
+  } catch (err) {
+    callback(err, null);
+  }
+};
+
+
+/* const pool = mysql.createPool({
   connectionLimit: 10,
   host: process.env.DB_HOST,
   user: process.env.DATABASE_USER ,
@@ -38,4 +87,4 @@ pool.getConnection((err: any, connection: { query: (arg0: string, arg1: (error: 
   
       console.log('Table created successfully:', results);
     });
-  });
+  }); */
