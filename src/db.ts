@@ -29,7 +29,21 @@ export function executeQuery(query:string) {
     } else {
       console.log('Query executed successfully:', result);
 
+
     }
+  });
+}
+export async function executeQuery_(query: string) {
+  return new Promise((resolve, reject) => {
+    db.query(query, (err: any, result: any) => {
+      if (err) {
+        console.error('Error executing query:', err);
+        reject(err); // Reject the promise with the error
+      } else {
+        console.log('Query executed successfully:', result);
+        resolve(result); // Resolve the promise with the result
+      }
+    });
   });
 }
  
@@ -41,7 +55,8 @@ export function executeQuery(query:string) {
 
 export const addEntry = async (id:string, uploaded:boolean, callback:any) => {
   const uploadedValue = uploaded ? 1 : 0;
-  const insertQuery = `INSERT INTO vercel (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
+  const deployed = 0;
+  const insertQuery = `INSERT INTO vercel (id, uploaded ,deployed) VALUES ('${id}', ${uploadedValue}, ${deployed})`;
 
   try {
     const result = await executeQuery(insertQuery);
@@ -51,14 +66,18 @@ export const addEntry = async (id:string, uploaded:boolean, callback:any) => {
   }
 };
 
-/* const createTableQuery = `
-  CREATE TABLE IF NOT EXISTS vercel (
-    id VARCHAR(255) NOT NULL,
-    uploaded BOOLEAN,
-    deployed BOOLEAN,
-    PRIMARY KEY (id)
-  )
-`; */
+
+export const deployedCheck = async (id: string) => {
+  try {
+    const selectQuery = `SELECT deployed FROM vercel WHERE id = '${id}'`;
+    const result = await executeQuery_(selectQuery);
+    console.log("result",result); // Logging the result to the console.
+    return result; // Return the result if successful
+  } catch (error) {
+    console.error(error); // Log any errors to the console.
+    throw error; // Throw the error if unsuccessful
+  }
+};
 
 
 /* const pool = mysql.createPool({

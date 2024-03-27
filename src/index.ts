@@ -5,7 +5,7 @@ import { generate } from "./utils";
 import path from "path";
 import { getAllFiles } from "./files";  
 import { addQueue, uploadFile } from "./aws";
-import { addEntry } from "./db";
+import { addEntry ,deployedCheck} from "./db";
 const app = express();
 app.use(cors())
 app.use(express.json());
@@ -33,5 +33,19 @@ app.post("/deploy", async (req, res) => {
         id: id
     })
 });
+
+app.get("/status", async (req, res) => {
+  const id = req.query.id as string; // Assuming id is sent as a query parameter
+  await deployedCheck(id ).then((result) =>{
+    console.log(result);
+    
+      res.json({
+        id: id,
+        status: result
+      });
+    }
+
+
+)});
 
 app.listen(3000);

@@ -45,4 +45,14 @@ app.post("/deploy", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         id: id
     });
 }));
+app.get("/status", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.query.id; // Assuming id is sent as a query parameter
+    yield (0, db_1.deployedCheck)(id).then((result) => {
+        console.log(result);
+        res.json({
+            id: id,
+            status: result
+        });
+    });
+}));
 app.listen(3000);

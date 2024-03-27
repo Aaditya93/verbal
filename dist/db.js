@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addEntry = exports.executeQuery = void 0;
+exports.deployedCheck = exports.addEntry = exports.executeQuery_ = exports.executeQuery = void 0;
 // Importing necessary modules
 const mysql = require('mysql');
 require('dotenv').config();
@@ -38,6 +38,23 @@ function executeQuery(query) {
     });
 }
 exports.executeQuery = executeQuery;
+function executeQuery_(query) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            db.query(query, (err, result) => {
+                if (err) {
+                    console.error('Error executing query:', err);
+                    reject(err); // Reject the promise with the error
+                }
+                else {
+                    console.log('Query executed successfully:', result);
+                    resolve(result); // Resolve the promise with the result
+                }
+            });
+        });
+    });
+}
+exports.executeQuery_ = executeQuery_;
 /* export const addEntry = (id:string, uploaded:boolean) => {
   const insertQuery = `INSERT INTO your_table_name (id, uploaded) VALUES ('${id}', ${uploaded ? 1 : 0})`;
   executeQuery(insertQuery);
@@ -45,7 +62,8 @@ exports.executeQuery = executeQuery;
  */
 const addEntry = (id, uploaded, callback) => __awaiter(void 0, void 0, void 0, function* () {
     const uploadedValue = uploaded ? 1 : 0;
-    const insertQuery = `INSERT INTO vercel (id, uploaded) VALUES ('${id}', ${uploadedValue})`;
+    const deployed = 0;
+    const insertQuery = `INSERT INTO vercel (id, uploaded ,deployed) VALUES ('${id}', ${uploadedValue}, ${deployed})`;
     try {
         const result = yield executeQuery(insertQuery);
         callback(null, result);
@@ -55,14 +73,19 @@ const addEntry = (id, uploaded, callback) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.addEntry = addEntry;
-/* const createTableQuery = `
-  CREATE TABLE IF NOT EXISTS vercel (
-    id VARCHAR(255) NOT NULL,
-    uploaded BOOLEAN,
-    deployed BOOLEAN,
-    PRIMARY KEY (id)
-  )
-`; */
+const deployedCheck = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const selectQuery = `SELECT deployed FROM vercel WHERE id = '${id}'`;
+        const result = yield executeQuery_(selectQuery);
+        console.log("result", result); // Logging the result to the console.
+        return result; // Return the result if successful
+    }
+    catch (error) {
+        console.error(error); // Log any errors to the console.
+        throw error; // Throw the error if unsuccessful
+    }
+});
+exports.deployedCheck = deployedCheck;
 /* const pool = mysql.createPool({
   connectionLimit: 10,
   host: process.env.DB_HOST,
